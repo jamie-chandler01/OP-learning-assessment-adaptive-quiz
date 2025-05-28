@@ -4,55 +4,107 @@
     <meta charset="UTF-8">
     <title>Quiz Flow Visualization</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        .node circle {
-            fill: #487da4;
-            stroke: #fff;
-            stroke-width: 2px;
-        }
-        .node text {
-            font-size: 14px;
-            fill: white;
-        }
-        .link {
-            fill: none;
-            stroke: #de9179;
-            stroke-width: 2px;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div id="intro-container">
+        <h1>Welcome to the Adaptive Quiz</h1>
+        <p>This quiz dynamically adjusts based on your responses.</p>
+        <button class="start-btn" onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div id="quiz-container" style="display:none;">
+        <div id="question-container" class="question"></div>
+        <div id="options-container"></div>
+    </div>
+
     <svg width="800" height="600"></svg>
-    
-    <script>
-        const quizData = [
-            { id: "q1", question: "Data Visualization?", next: ["q2", "q3"] },
-            { id: "q2", question: "Data Analysis?", next: ["q3", "q4"] },
-            { id: "q3", question: "AI Applications?", next: ["q4", "q5"] },
-            { id: "q4", question: "Geospatial Tools?", next: ["q5", "q6"] }
-        ];
-
-        const treeLayout = d3.tree().size([600, 400]);
-        const hierarchy = d3.hierarchy({ children: quizData }, d => d.next);
-        const treeData = treeLayout(hierarchy);
-
-        const svg = d3.select("svg"),
-            g = svg.append("g").attr("transform", "translate(100,50)");
-
-        const link = g.selectAll(".link")
-            .data(treeData.links())
-            .enter().append("path")
-            .attr("class", "link")
-            .attr("d", d3.linkVertical().x(d => d.x).y(d => d.y));
-
-        const node = g.selectAll(".node")
-            .data(treeData.descendants())
-            .enter().append("g")
-            .attr("class", "node")
-            .attr("transform", d => `translate(${d.x},${d.y})`);
-
-        node.append("circle").attr("r", 20);
-        node.append("text").attr("dy", 5).attr("text-anchor", "middle").text(d => d.data.question);
-    </script>
 </body>
 </html>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #intro-container, #quiz-container {
+        max-width: 650px;
+        padding: 25px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    h1 {
+        color: #0079c1;
+        font-weight: 600;
+    }
+    .question {
+        font-size: 1.2em;
+        font-weight: 400;
+        margin-bottom: 15px;
+    }
+    .start-btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        font-size: 14pt;
+        font-weight: 500;
+        background: #487da4;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.1s;
+    }
+    .start-btn:hover {
+        background: #356489;
+        transform: scale(1.05);
+    }
+    .start-btn:active {
+        background: #de9179;
+    }
+    svg {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+    }
+</style>
+<script>
+    const quizData = [
+        { id: "q1", question: "How familiar are you with data visualization?", next: ["q2", "q3"] },
+        { id: "q2", question: "How experienced are you with data analysis?", next: ["q3", "q4"] },
+        { id: "q3", question: "How comfortable are you with AI applications?", next: ["q4", "q5"] },
+        { id: "q4", question: "How proficient are you with GIS tools?", next: ["q5", "q6"] }
+    ];
+
+    const treeLayout = d3.tree().size([600, 400]);
+    const hierarchy = d3.hierarchy({ children: quizData }, d => d.next);
+    const treeData = treeLayout(hierarchy);
+
+    const svg = d3.select("svg"),
+        g = svg.append("g").attr("transform", "translate(100,50)");
+
+    const link = g.selectAll(".link")
+        .data(treeData.links())
+        .enter().append("path")
+        .attr("class", "link")
+        .attr("d", d3.linkVertical().x(d => d.x).y(d => d.y));
+
+    const node = g.selectAll(".node")
+        .data(treeData.descendants())
+        .enter().append("g")
+        .attr("class", "node")
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+
+    node.append("circle").attr("r", 20);
+    node.append("text").attr("dy", 5).attr("text-anchor", "middle").text(d => d.data.question);
+
+    function startQuiz() {
+        document.getElementById("intro-container").style.display = "none";
+        document.getElementById("quiz-container").style.display = "block";
+    }
+</script>
