@@ -18,7 +18,7 @@
         <div id="options-container"></div>
     </div>
 
-    <svg width="800" height="600"></svg>
+    <svg width="1200" height="800"></svg>
 </body>
 </html>
 <style>
@@ -84,6 +84,7 @@
     const treeLayout = d3.tree().size([600, 400]);
     const hierarchy = d3.hierarchy({ children: quizData }, d => d.next);
     const treeData = treeLayout(hierarchy);
+    console.log(treeData); // Debugging: Check if treeData is being created correctly
 
     const svg = d3.select("svg"),
         g = svg.append("g").attr("transform", "translate(100,50)");
