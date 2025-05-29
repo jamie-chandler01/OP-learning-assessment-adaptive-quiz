@@ -44,11 +44,12 @@
       #intro-container strong {
           color: var(--primary-blue);
       }
-      .question {
-        font-size: 1.3em; /* Consolidated: All question text will be this size */
+      /* This targets the question text itself */
+      #question-container.question { /* Added #question-container to increase specificity */
+        font-size: 1.3em; /* All question text will be this size */
         margin-bottom: 20px;
         color: var(--primary-blue);
-        text-align: left; /* Changed from 'center' to 'left' */
+        text-align: left; /* All questions left-aligned */
       }
       button.option,
       button.start-btn {
@@ -64,8 +65,9 @@
         font-size: 1.1em; /* Slightly larger text for buttons */
         transition: background 0.3s ease; /* Smooth hover effect */
       }
+      /* Specific override for option text font size */
       button.option {
-        font-size: 12pt; /* Keep specific font size as requested for options */
+        font-size: 12pt; /* Ensures option text is 12pt as requested */
         text-align: left; /* Align option text to the left */
       }
       button.option:hover,
