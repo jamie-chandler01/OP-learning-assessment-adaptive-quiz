@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Adaptive Quiz & Flow Visualization</title>
+    <title>Adaptive Quiz & Flow Visualization (Force-Directed)</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
@@ -80,10 +80,10 @@
 
         /* D3.js specific styles */
         .link {
-            fill: none;
             stroke: #ccc;
             stroke-width: 2px;
             transition: stroke-width 0.3s ease, stroke 0.3s ease;
+            marker-end: url(#arrowhead); /* Add arrowhead to links */
         }
         .link.active-path {
             stroke: #0079c1; /* Active path color */
@@ -111,6 +111,7 @@
             fill: #333;
             pointer-events: none; /* Prevent text from blocking mouse events on circle */
             text-shadow: 0 1px 0 rgba(255,255,255,0.8); /* For better readability on light circles */
+            text-anchor: middle;
         }
         .node.current text {
             font-weight: 600;
@@ -119,16 +120,16 @@
         /* Tooltip styles */
         .tooltip {
             position: absolute;
-            text-align: center;
-            width: 160px; /* Adjusted width */
+            text-align: left; /* Aligned left for easier reading */
+            max-width: 250px; /* Wider for full questions */
             height: auto;
-            padding: 8px;
-            font: 12px sans-serif;
-            background: lightsteelblue;
-            border: 0px;
+            padding: 10px;
+            font: 13px sans-serif;
+            background: rgba(240, 248, 255, 0.95); /* Lighter background */
+            border: 1px solid #cce;
             border-radius: 8px;
             pointer-events: none;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             color: #333;
             opacity: 0; /* Hidden by default */
             transition: opacity 0.2s ease-in-out;
@@ -152,7 +153,6 @@
 
     <script>
         // Define your quiz data
-        // For D3, we need to map IDs to actual objects for hierarchy
         const quizData = [
             { id: "q1", question: "How familiar are you with data visualization?", options: ["Not at all", "Slightly", "Moderately", "Very"], next: { "Not at all": "q2", "Slightly": "q3", "Moderately": "q4", "Very": "q5" } },
             { id: "q2", question: "Which of these best describes your experience with programming?", options: ["None", "Beginner (e.g., Scratch, basic HTML)", "Intermediate (e.g., Python basics, JavaScript basics)", "Advanced (e.g., multiple languages, complex projects)"], next: { "None": "q3", "Beginner (e.g., Scratch, basic HTML)": "q3", "Intermediate (e.g., Python basics, JavaScript basics)": "q4", "Advanced (e.g., multiple languages, complex projects)": "q5" } },
@@ -160,18 +160,34 @@
             { id: "q4", question: "Have you ever used a Geographic Information System (GIS) tool?", options: ["No", "Yes, occasionally", "Yes, regularly"], next: { "No": "q5", "Yes, occasionally": "q6", "Yes, regularly": "q7" } },
             { id: "q5", question: "What is your interest level in learning about AI applications?", options: ["Low", "Medium", "High"], next: { "Low": "end_basic", "Medium": "q6", "High": "q7" } },
             { id: "q6", question: "How confident are you in interpreting complex charts and graphs?", options: ["Not confident", "Moderately confident", "Very confident"], next: { "Not confident": "q7", "Moderately confident": "q7", "Very confident": "end_advanced" } },
-            { id: "q7", question: "Which topic would you prefer to learn more about?", options: ["Data Cleaning", "Machine Learning Algorithms", "Interactive Dashboards", "Spatial Analysis"], next: { "Data Cleaning": "end_data_cleaning", "Machine Learning Algorithms": "end_ml", "Interactive Dashboards": "end_dashboards", "Spatial Analysis": "end_spatial" } }
+            { id: "q7", question: "Which topic would you prefer to learn more about?", options: ["Data Cleaning", "Machine Learning Algorithms", "Interactive Dashboards", "Spatial Analysis"], next: { "Data Cleaning": "end_data_cleaning", "Machine Learning Algorithms": "end_ml", "Interactive Dashboards": "end_dashboards", "Spatial Analysis": "end_spatial" } },
             // Add 'end' nodes for demonstration, these will be treated as leaf nodes
-            , { id: "end_basic", question: "End of Basic Path: You've completed the basic assessment!" }
-            , { id: "end_advanced", question: "End of Advanced Path: Great insights!" }
-            , { id: "end_data_cleaning", question: "End: Focus on Data Cleaning." }
-            , { id: "end_ml", question: "End: Focus on Machine Learning Algorithms." }
-            , { id: "end_dashboards", question: "End: Focus on Interactive Dashboards." }
-            , { id: "end_spatial", question: "End: Focus on Spatial Analysis." }
+            { id: "end_basic", question: "End of Basic Path: You've completed the basic assessment!" },
+            { id: "end_advanced", question: "End of Advanced Path: Great insights!" },
+            { id: "end_data_cleaning", question: "End: Focus on Data Cleaning." },
+            { id: "end_ml", question: "End: Focus on Machine Learning Algorithms." },
+            { id: "end_dashboards", question: "End: Focus on Interactive Dashboards." },
+            { id: "end_spatial", question: "End: Focus on Spatial Analysis." }
         ];
 
         // Create a map for quick lookup of questions by ID
         const questionMap = new Map(quizData.map(q => [q.id, q]));
+
+        // --- Prepare data for D3-Force ---
+        const nodes = Array.from(questionMap.values()); // All questions are nodes
+
+        const links = [];
+        quizData.forEach(q => {
+            if (q.next) {
+                for (const option in q.next) {
+                    const targetId = q.next[option];
+                    // Ensure the target node actually exists in our data
+                    if (questionMap.has(targetId)) {
+                        links.push({ source: q.id, target: targetId });
+                    }
+                }
+            }
+        });
 
         // --- D3.js Visualization Setup ---
         const svgWidth = 1200;
@@ -180,41 +196,6 @@
         const innerWidth = svgWidth - margin.left - margin.right;
         const innerHeight = svgHeight - margin.top - margin.bottom;
 
-        const treeLayout = d3.tree().size([innerWidth, innerHeight]);
-
-        // Custom hierarchy function to handle non-standard 'next' structure
-        // This creates a hierarchical structure based on your quiz logic
-        function createQuizHierarchy(data) {
-            // Find the root question (assuming "q1" is always the start)
-            const rootNode = questionMap.get("q1");
-
-            if (!rootNode) {
-                console.error("Root question 'q1' not found in quizData.");
-                return null;
-            }
-
-            // Function to recursively build children
-            function buildChildren(nodeData) {
-                if (nodeData.next) {
-                    const children = Object.values(nodeData.next) // Get all possible next question IDs
-                                          .filter(id => questionMap.has(id)) // Filter out non-existent IDs
-                                          .map(id => questionMap.get(id)); // Get the actual question objects
-                    return children;
-                }
-                return null;
-            }
-
-            return d3.hierarchy(rootNode, buildChildren);
-        }
-
-        const hierarchy = createQuizHierarchy(quizData);
-        if (!hierarchy) {
-            console.error("Failed to create D3 hierarchy. Visualization aborted.");
-            document.querySelector("svg").style.display = "none"; // Hide SVG if hierarchy fails
-        }
-
-        const treeData = hierarchy ? treeLayout(hierarchy) : null;
-
         const svg = d3.select("svg")
             .attr("width", svgWidth)
             .attr("height", svgHeight);
@@ -222,44 +203,79 @@
         const g = svg.append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
+        // Define arrowhead marker
+        svg.append("defs").append("marker")
+            .attr("id", "arrowhead")
+            .attr("viewBox", "-0 -5 10 10")
+            .attr("refX", 25) // Distance from target circle center
+            .attr("refY", 0)
+            .attr("orient", "auto")
+            .attr("markerWidth", 5)
+            .attr("markerHeight", 5)
+            .attr("xoverflow", "visible")
+            .append("path")
+            .attr("d", "M 0,-5 L 10,0 L 0,5")
+            .attr("fill", "#ccc")
+            .style("stroke", "none");
+
         // Tooltip for hovering over nodes
         const tooltip = d3.select(".tooltip");
 
-        let link, node; // Declare these globally or in a scope where updateVisualization can access them
+        let linkSelection, nodeSelection; // Declare these globally or in a scope where updateVisualization can access them
+        let simulation; // Declare simulation globally
+
+        function initializeSimulation() {
+            simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(150).strength(0.8)) // Adjust distance and strength
+                .force("charge", d3.forceManyBody().strength(-300)) // Push nodes apart
+                .force("center", d3.forceCenter(innerWidth / 2, innerHeight / 2)); // Center the graph
+
+            simulation.on("tick", () => {
+                linkSelection
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                nodeSelection
+                    .attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+        }
 
         function drawVisualization() {
-            if (!treeData) return;
+            if (!simulation) { // Initialize simulation only once
+                initializeSimulation();
+            }
 
-            // Links
-            link = g.selectAll(".link")
-                .data(treeData.links(), d => d.target.data.id) // Use target id for key function for stable updates
-                .join("path") // Use join for enter/update/exit
-                .attr("class", "link")
-                .attr("d", d3.linkVertical()
-                    .x(d => d.x)
-                    .y(d => d.y));
+            // Links (lines for now, markers will be added via CSS)
+            linkSelection = g.selectAll(".link")
+                .data(links, d => `${d.source.id}-${d.target.id}`) // Key function for unique links
+                .join("line")
+                .attr("class", "link");
 
             // Nodes
-            node = g.selectAll(".node")
-                .data(treeData.descendants(), d => d.data.id) // Use data id for key function for stable updates
+            nodeSelection = g.selectAll(".node")
+                .data(nodes, d => d.id) // Key function for unique nodes
                 .join(
                     enter => {
                         const nodeEnter = enter.append("g")
                             .attr("class", "node")
-                            .attr("transform", d => `translate(${d.x},${d.y})`);
+                            .call(d3.drag() // Make nodes draggable
+                                .on("start", dragstarted)
+                                .on("drag", dragged)
+                                .on("end", dragended));
 
                         nodeEnter.append("circle")
                             .attr("r", 20);
 
                         nodeEnter.append("text")
                             .attr("dy", 5)
-                            .attr("text-anchor", "middle")
-                            .text(d => d.data.id); // Display ID in circle by default, full question in tooltip
+                            .text(d => d.id); // Display ID in circle
 
                         // Tooltip events
                         nodeEnter.on("mouseover", function(event, d) {
                             tooltip.style("opacity", 1)
-                                .html(`<strong>${d.data.id}:</strong><br>${d.data.question || "End of path"}`)
+                                .html(`<strong>${d.id}:</strong><br>${d.question || "End of path"}`)
                                 .style("left", (event.pageX + 10) + "px")
                                 .style("top", (event.pageY - 28) + "px");
                         })
@@ -269,11 +285,34 @@
 
                         return nodeEnter;
                     },
-                    update => update.attr("transform", d => `translate(${d.x},${d.y})`), // Update position
+                    update => update, // No specific update behavior for now, just keep existing
                     exit => exit.remove()
                 );
 
+            // Restart simulation to apply new data/forces if necessary
+            simulation.nodes(nodes);
+            simulation.force("link").links(links);
+            simulation.alpha(1).restart(); // "Warm up" the simulation
+
             updateVisualization(); // Initial update to highlight current/visited
+        }
+
+        // Drag functions for force layout
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null; // Let the simulation control after drag
+            d.fy = null;
         }
 
         // --- Quiz Logic ---
@@ -285,7 +324,7 @@
 
         let currentQuestionId = "q1"; // Start with the first question
         let visitedNodes = new Set();
-        let pathLinks = new Set(); // Stores objects like {sourceId, targetId} or actual D3 link objects
+        let pathLinks = new Set(); // Stores objects like {sourceId, targetId}
 
         function startQuiz() {
             introContainer.style.display = "none";
@@ -332,29 +371,29 @@
             const nextQuestionId = currentQ.next[selectedOption];
 
             if (nextQuestionId) {
-                // Add the link to the path
+                // Add the link to the path (using source.id and target.id)
                 pathLinks.add(JSON.stringify({ source: currentQ.id, target: nextQuestionId }));
                 loadQuestion(nextQuestionId);
             } else {
-                // Should not happen if quizData.next is well-defined
-                console.warn("No next question defined for this option.");
-                // Optionally, end the quiz here or show an error
-                questionContainer.textContent = "Error: No next question found.";
+                console.warn("No next question defined for this option. Ending quiz.");
+                questionContainer.textContent = "Quiz Ended Unexpectedly.";
                 optionsContainer.innerHTML = '';
+                currentQuestionId = null;
+                updateVisualization();
             }
         }
 
         // --- D3.js Visualization Update Function ---
         function updateVisualization() {
-            if (!node || !link) return; // Ensure visualization elements exist
+            if (!nodeSelection || !linkSelection) return; // Ensure visualization elements exist
 
             // Update node styles
-            node.classed("current", d => d.data.id === currentQuestionId)
-                .classed("visited", d => visitedNodes.has(d.data.id) && d.data.id !== currentQuestionId); // Visited but not current
+            nodeSelection.classed("current", d => d.id === currentQuestionId)
+                         .classed("visited", d => visitedNodes.has(d.id) && d.id !== currentQuestionId);
 
             // Update link styles
-            link.classed("active-path", d => {
-                const linkKey = JSON.stringify({ source: d.source.data.id, target: d.target.data.id });
+            linkSelection.classed("active-path", d => {
+                const linkKey = JSON.stringify({ source: d.source.id, target: d.target.id });
                 return pathLinks.has(linkKey);
             });
         }
@@ -362,10 +401,8 @@
         // Event listener for the start button
         startButton.addEventListener("click", startQuiz);
 
-        // Initial drawing of the visualization (optional, could be hidden until quiz starts)
-        // If you want to show the full map before starting, call drawVisualization() here.
+        // Initial setup for the visualization (optional: call drawVisualization here if you want to see the static map before starting)
         // For this example, it's called in startQuiz().
-        // drawVisualization();
     </script>
 </body>
 </html>
