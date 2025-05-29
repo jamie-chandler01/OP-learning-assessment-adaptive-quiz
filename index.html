@@ -2,80 +2,116 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Data Viz and AI Learning Assessment</title>
+    <title>Data Viz & AI Skills Assessment</title>
     <style>
+      :root {
+        /* Define a modern, professional color palette */
+        --primary-blue: #2c3e50; /* Dark blue for primary elements like headings/buttons */
+        --accent-teal: #1abc9c; /* A vibrant teal for accents, like hover states */
+        --light-gray: #ecf0f1; /* Light background for body */
+        --medium-gray: #bdc3c7; /* Border color */
+        --dark-text: #34495e; /* Darker text for readability */
+        --white: #ffffff;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A slightly more modern font */
+        background: var(--light-gray);
         margin: 20px;
+        color: var(--dark-text);
+        line-height: 1.6;
       }
       #intro-container,
       #quiz-container,
       #result-container {
-        max-width: 600px;
-        margin: auto;
-        padding: 20px;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+        max-width: 700px; /* Slightly wider for better readability */
+        margin: 40px auto; /* More vertical margin */
+        padding: 30px; /* More internal padding */
+        background: var(--white);
+        border: 1px solid var(--medium-gray);
+        border-radius: 10px; /* Slightly more rounded corners */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
       }
       #intro-container h1 {
-        color: #0079c1;
+        color: var(--primary-blue);
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2em; /* Larger heading */
+      }
+      #intro-container p {
+          margin-bottom: 15px;
+      }
+      #intro-container strong {
+          color: var(--primary-blue);
       }
       .question {
-        font-size: 1.2em;
-        margin-bottom: 10px;
+        font-size: 1.3em; /* Slightly larger question text */
+        margin-bottom: 20px;
+        color: var(--primary-blue);
+        text-align: center;
       }
       button.option,
       button.start-btn {
         display: block;
         width: 100%;
-        padding: 10px;
-        margin: 5px 0;
-        background: #0079c1;
-        color: #fff;
+        padding: 12px 15px; /* More padding for buttons */
+        margin: 10px 0; /* More spacing between options */
+        background: var(--primary-blue);
+        color: var(--white);
         border: none;
-        border-radius: 4px;
+        border-radius: 6px; /* Match container rounding */
         cursor: pointer;
+        font-size: 1.1em; /* Slightly larger text for buttons */
+        transition: background 0.3s ease; /* Smooth hover effect */
       }
-      /* Set question options text to 12 point */
       button.option {
-        font-size: 12pt;
+        font-size: 12pt; /* Keep specific font size as requested for options */
+        text-align: left; /* Align option text to the left */
       }
       button.option:hover,
       button.start-btn:hover {
-        background: #005f98;
+        background: var(--accent-teal); /* Accent color on hover */
       }
       #result-container {
         text-align: center;
         margin-top: 20px;
       }
+      #result-container h2 {
+          color: var(--primary-blue);
+          font-size: 1.8em;
+          margin-bottom: 15px;
+      }
+      #module-name {
+          color: var(--accent-teal);
+          font-weight: bold;
+      }
       .why-text {
         font-style: italic;
-        margin-top: 10px;
+        margin-top: 20px; /* More space above the why text */
+        color: var(--dark-text);
       }
     </style>
   </head>
   <body>
-    <!-- Introduction Section -->
     <div id="intro-container">
-      <h1>Welcome to the Data Viz and AI Learning Assessment</h1>
+      <h1>Unlock Your Learning Path</h1>
       <p>
-        This assessment is designed to help you evaluate your skills in data visualization, data analysis, and applying AI in planning or historic preservation. Based on your responses, you will receive a recommendation for a learning module that best fits your current level and aspirations.
+        Welcome to the **Data Viz & AI Skills Assessment**! This quick quiz will help you identify your strengths in data visualization, data analysis, and the application of AI in planning or historic preservation.
       </p>
       <p>
-        <strong>What you will get out of this quiz:</strong> A clear learning path—from building foundational skills to exploring innovative and transformational approaches in planning or historic preservation. Each recommendation includes a “why” statement to help you understand the reasoning behind it.
+        Based on your responses, you'll receive a personalized recommendation for a learning module that perfectly matches your current expertise and career aspirations.
       </p>
-      <button class="start-btn" onclick="startQuiz()">Start Quiz</button>
+      <p>
+        **What's in it for you?** A clear, actionable roadmap to enhance your skills—from foundational concepts to advanced, transformative approaches. Every recommendation comes with a "why" statement, so you understand the logic behind your suggested learning journey.
+      </p>
+      <button class="start-btn" onclick="startQuiz()">Start Assessment</button>
     </div>
     
-    <!-- Quiz Section (initially hidden) -->
     <div id="quiz-container" style="display:none;">
       <div id="question-container" class="question"></div>
       <div id="options-container"></div>
     </div>
 
-    <!-- Results Section (initially hidden) -->
     <div id="result-container" style="display: none;">
       <h2>Your Recommended Module: <span id="module-name"></span></h2>
       <p id="module-description"></p>
@@ -87,102 +123,102 @@
       const quizData = [
         {
           id: "q1",
-          question: "1. How familiar are you with data visualization?",
+          question: "1. How experienced are you with creating data visualizations?",
           options: [
-            { text: "I have no experience", weight: 1, next: "q2" },
-            { text: "I've seen examples but haven't created visuals", weight: 2, next: "q2" },
-            { text: "I can create basic visuals", weight: 3, next: "q2" },
-            { text: "I'm very skilled with various visualization tools", weight: 4, next: "q2" }
+            { text: "I have no practical experience creating visuals.", weight: 1, next: "q2" },
+            { text: "I've explored visualization concepts and basic tools.", weight: 2, next: "q2" },
+            { text: "I can independently create effective data visualizations.", weight: 3, next: "q2" },
+            { text: "I'm highly skilled in designing and implementing complex visualizations.", weight: 4, next: "q2" }
           ]
         },
         {
           id: "q2",
-          question: "2. How experienced are you with data analysis?",
+          question: "2. What's your practical experience with data analysis?",
           options: [
-            { text: "None", weight: 1, next: "q3" },
-            { text: "I have some experience with public records", weight: 2, next: "q3" },
-            { text: "I've used datasets in projects", weight: 3, next: "q3" },
-            { text: "I routinely analyze diverse datasets", weight: 4, next: "q3" }
+            { text: "I have no hands-on experience with data analysis.", weight: 1, next: "q3" },
+            { text: "I can interpret simple datasets and identify basic trends.", weight: 2, next: "q3" },
+            { text: "I regularly clean, analyze, and extract insights from diverse datasets.", weight: 3, next: "q3" },
+            { text: "I lead complex data analysis projects and develop new methodologies.", weight: 4, next: "q3" }
           ]
         },
         {
           id: "q3",
-          question: "3. How comfortable are you with applying AI in your work?",
+          question: "3. What's your comfort level with using Artificial Intelligence (AI) in your professional tasks?",
           options: [
-            { text: "I have no experience with AI", weight: 1, next: "q4" },
-            { text: "I've watched beginner videos on AI", weight: 2, next: "q4" },
-            { text: "I've experimented with pre-trained AI models", weight: 3, next: "q4" },
-            { text: "I've implemented AI analytics in projects", weight: 4, next: "q4" }
+            { text: "I have no practical experience with AI.", weight: 1, next: "q4" },
+            { text: "I've explored AI concepts, but haven't applied them directly.", weight: 2, next: "q4" },
+            { text: "I've used basic AI tools or features in some tasks.", weight: 3, next: "q4" },
+            { text: "I regularly integrate AI tools and analyses into my projects.", weight: 4, next: "q4" }
           ]
         },
         {
           id: "q4",
-          question: "4. How proficient are you with GIS tools such as ArcGIS?",
+          question: "4. How proficient are you with Geographic Information Systems (GIS)?",
           options: [
-            { text: "I've never used GIS tools", weight: 1, next: "q5" },
-            { text: "I have limited experience with basic GIS mapping", weight: 2, next: "q5" },
-            { text: "I can create maps using GIS tools", weight: 3, next: "q5" },
-            { text: "I'm proficient and customize GIS applications", weight: 4, next: "q5" }
+            { text: "I've never used GIS software.", weight: 1, next: "q5" },
+            { text: "I have limited experience with basic GIS mapping.", weight: 2, next: "q5" },
+            { text: "I can create maps and perform basic spatial analysis using GIS.", weight: 3, next: "q5" },
+            { text: "I'm highly proficient and can customize GIS applications.", weight: 4, next: "q5" }
           ]
         },
         {
           id: "q5",
-          question: "5. How familiar are you with using statistical analysis tools (e.g., Python, R)?",
+          question: "5. How familiar are you with using statistical analysis software (e.g., Python, R, SPSS)?",
           options: [
-            { text: "I'm new to statistical analysis", weight: 1, next: "q6" },
-            { text: "I have basic skills using spreadsheets", weight: 2, next: "q6" },
-            { text: "I have intermediate coding skills in Python or R", weight: 3, next: "q6" },
-            { text: "I'm highly experienced in advanced statistical techniques", weight: 4, next: "q6" }
+            { text: "I'm new to statistical analysis software.", weight: 1, next: "q6" },
+            { text: "I can perform basic statistical calculations in spreadsheets.", weight: 2, next: "q6" },
+            { text: "I have intermediate coding skills to conduct statistical analysis.", weight: 3, next: "q6" },
+            { text: "I'm highly experienced in advanced statistical modeling and programming.", weight: 4, next: "q6" }
           ]
         },
         {
           id: "q6",
-          question: "6. How comfortable are you with creating interactive dashboards?",
+          question: "6. How comfortable are you with developing interactive dashboards?",
           options: [
-            { text: "I've never built a dashboard", weight: 1, next: "q7" },
-            { text: "I’ve built simple dashboards", weight: 2, next: "q7" },
-            { text: "I can build effective interactive dashboards", weight: 3, next: "q7" },
-            { text: "I routinely build complex dashboards", weight: 4, next: "q7" }
+            { text: "I've never built an interactive dashboard.", weight: 1, next: "q7" },
+            { text: "I've built simple dashboards using drag-and-drop tools.", weight: 2, next: "q7" },
+            { text: "I can design and implement effective interactive dashboards for various audiences.", weight: 3, next: "q7" },
+            { text: "I routinely build complex, dynamic dashboards with custom features and data integrations.", weight: 4, next: "q7" }
           ]
         },
         {
           id: "q7",
-          question: "7. How willing are you to explore emerging technologies in planning or historic preservation (e.g., digital twins, predictive modeling, AI techniques)?",
+          question: "7. How willing are you to explore and apply emerging technologies in planning or historic preservation (e.g., digital twins, predictive modeling, advanced AI)?",
           options: [
-            { text: "Not interested", weight: 1, next: "q8" },
-            { text: "Somewhat curious", weight: 2, next: "q8" },
-            { text: "Excited to explore", weight: 3, next: "q8" },
-            { text: "Eager to lead in emerging tech", weight: 4, next: "q8" }
+            { text: "I'm not currently interested in emerging technologies.", weight: 1, next: "q8" },
+            { text: "I'm curious and occasionally read about new trends.", weight: 2, next: "q8" },
+            { text: "I actively seek out and experiment with new technologies.", weight: 3, next: "q8" },
+            { text: "I'm eager to lead the adoption and integration of cutting-edge technologies.", weight: 4, next: "q8" }
           ]
         },
         {
           id: "q8",
           question: "8. How experienced are you with data storytelling and communicating insights through visualizations?",
           options: [
-            { text: "I have no experience with data storytelling", weight: 1, next: "q9" },
-            { text: "I sometimes share basic visualizations", weight: 2, next: "q9" },
-            { text: "I regularly create compelling narratives with data", weight: 3, next: "q9" },
-            { text: "I'm adept at data-driven storytelling and public engagement", weight: 4, next: "q9" }
+            { text: "I have no experience in presenting data narratives.", weight: 1, next: "q9" },
+            { text: "I can create basic visualizations and share them with an audience.", weight: 2, next: "q9" },
+            { text: "I regularly craft compelling narratives and communicate complex insights effectively.", weight: 3, next: "q9" },
+            { text: "I'm adept at influencing decisions and engaging stakeholders through advanced data storytelling.", weight: 4, next: "q9" }
           ]
         },
         {
           id: "q9",
-          question: "9. How proactive are you in keeping up with the latest analytical trends and innovations in planning or historic preservation?",
+          question: "9. How proactive are you in keeping up with the latest analytical trends and innovations relevant to your field?",
           options: [
-            { text: "I rarely follow new trends", weight: 1, next: "q10" },
-            { text: "I occasionally read industry updates", weight: 2, next: "q10" },
-            { text: "I actively seek new methods", weight: 3, next: "q10" },
-            { text: "I'm always on the lookout for breakthrough innovations", weight: 4, next: "q10" }
+            { text: "I rarely follow new trends in data analysis or planning/historic preservation.", weight: 1, next: "q10" },
+            { text: "I occasionally read industry updates and articles.", weight: 2, next: "q10" },
+            { text: "I actively seek out new methodologies, tools, and best practices.", weight: 3, next: "q10" },
+            { text: "I'm consistently researching, adopting, and even contributing to cutting-edge innovations.", weight: 4, next: "q10" }
           ]
         },
         {
           id: "q10",
-          question: "10. How valuable do you consider a structured learning path in advancing your skills?",
+          question: "10. How valuable do you consider a structured learning path for advancing your professional skills?",
           options: [
-            { text: "Not valuable", weight: 1, next: null },
-            { text: "Somewhat valuable", weight: 2, next: null },
-            { text: "Very valuable", weight: 3, next: null },
-            { text: "Essential for my career growth", weight: 4, next: null }
+            { text: "Not valuable for my current goals.", weight: 1, next: null },
+            { text: "Somewhat valuable, but I prefer informal learning.", weight: 2, next: null },
+            { text: "Very valuable for targeted skill development.", weight: 3, next: null },
+            { text: "Essential for continuous professional growth and career advancement.", weight: 4, next: null }
           ]
         }
       ];
