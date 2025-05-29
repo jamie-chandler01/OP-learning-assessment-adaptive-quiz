@@ -61,7 +61,7 @@
     <div id="intro-container">
       <h1>Welcome to the Data Viz and AI Learning Assessment</h1>
       <p>
-        This adaptive quiz is designed to help you evaluate your skills in data visualization, data analysis, and applying AI in planning or historic preservation. Based on your responses, you will receive a recommendation for a learning module that best fits your current level and aspirations.
+        This assessment is designed to help you evaluate your skills in data visualization, data analysis, and applying AI in planning or historic preservation. Based on your responses, you will receive a recommendation for a learning module that best fits your current level and aspirations.
       </p>
       <p>
         <strong>What you will get out of this quiz:</strong> A clear learning path—from building foundational skills to exploring innovative and transformational approaches in planning or historic preservation. Each recommendation includes a “why” statement to help you understand the reasoning behind it.
@@ -87,7 +87,7 @@
       const quizData = [
         {
           id: "q1",
-          question: "1. How familiar are you with data visualization for planning or historic preservation?",
+          question: "1. How familiar are you with data visualization?",
           options: [
             { text: "I have no experience", weight: 1, next: "q2" },
             { text: "I've seen examples but haven't created visuals", weight: 2, next: "q2" },
@@ -97,7 +97,7 @@
         },
         {
           id: "q2",
-          question: "2. How experienced are you with data analysis for planning or historic preservation?",
+          question: "2. How experienced are you with data analysis?",
           options: [
             { text: "None", weight: 1, next: "q3" },
             { text: "I have some experience with public records", weight: 2, next: "q3" },
@@ -107,7 +107,7 @@
         },
         {
           id: "q3",
-          question: "3. How comfortable are you with applying AI in planning or historic preservation?",
+          question: "3. How comfortable are you with applying AI in your work?",
           options: [
             { text: "I have no experience with AI", weight: 1, next: "q4" },
             { text: "I've watched beginner videos on AI", weight: 2, next: "q4" },
@@ -117,7 +117,7 @@
         },
         {
           id: "q4",
-          question: "4. How proficient are you with GIS tools such as ArcGIS or QGIS?",
+          question: "4. How proficient are you with GIS tools such as ArcGIS?",
           options: [
             { text: "I've never used GIS tools", weight: 1, next: "q5" },
             { text: "I have limited experience with basic GIS mapping", weight: 2, next: "q5" },
@@ -127,7 +127,7 @@
         },
         {
           id: "q5",
-          question: "5. How familiar are you with using statistical analysis tools (e.g., Python, R) in planning or historic preservation?",
+          question: "5. How familiar are you with using statistical analysis tools (e.g., Python, R)?",
           options: [
             { text: "I'm new to statistical analysis", weight: 1, next: "q6" },
             { text: "I have basic skills using spreadsheets", weight: 2, next: "q6" },
@@ -147,7 +147,7 @@
         },
         {
           id: "q7",
-          question: "7. How willing are you to explore emerging technologies in planning or historic preservation (e.g., digital twins, climate resilience with AI)?",
+          question: "7. How willing are you to explore emerging technologies in planning or historic preservation (e.g., digital twins, predictive modeling, AI techniques)?",
           options: [
             { text: "Not interested", weight: 1, next: "q8" },
             { text: "Somewhat curious", weight: 2, next: "q8" },
@@ -167,7 +167,7 @@
         },
         {
           id: "q9",
-          question: "9. How proactive are you in keeping up with the latest trends and innovations in planning or historic preservation?",
+          question: "9. How proactive are you in keeping up with the latest analytical trends and innovations in planning or historic preservation?",
           options: [
             { text: "I rarely follow new trends", weight: 1, next: "q10" },
             { text: "I occasionally read industry updates", weight: 2, next: "q10" },
@@ -177,7 +177,7 @@
         },
         {
           id: "q10",
-          question: "10. How valuable do you consider a structured learning path in advancing your skills in planning or historic preservation?",
+          question: "10. How valuable do you consider a structured learning path in advancing your skills?",
           options: [
             { text: "Not valuable", weight: 1, next: null },
             { text: "Somewhat valuable", weight: 2, next: null },
